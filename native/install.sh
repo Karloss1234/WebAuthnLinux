@@ -88,22 +88,50 @@ EOF
 
 # Directories to install to
 DIRS=()
+
 if [ "$DO_FIREFOX" = true ]; then
-    DIRS+=("$HOME/.mozilla/native-messaging-hosts")
+# Firefox native messaging locations:
+# - ~/.mozilla is common for upstream Mozilla Firefox
+# - ~/.config/mozilla is used by Fedora Firefox
+if [ -d "$HOME/.mozilla" ]; then
+DIRS+=("$HOME/.mozilla/native-messaging-hosts")
+elif [ -d "$HOME/.config/mozilla" ]; then
+DIRS+=("$HOME/.config/mozilla/native-messaging-hosts")
+else
+# Default to upstream Mozilla location
+DIRS+=("$HOME/.mozilla/native-messaging-hosts")
 fi
+fi
+
 if [ "$DO_CHROME" = true ]; then
-    DIRS+=("$HOME/.config/google-chrome/NativeMessagingHosts")
-    DIRS+=("$HOME/.config/chromium/NativeMessagingHosts")
+DIRS+=("$HOME/.config/google-chrome/NativeMessagingHosts")
+DIRS+=("$HOME/.config/chromium/NativeMessagingHosts")
 fi
 
 for HOST_DIR in "${DIRS[@]}"; do
     if [ -d "$(dirname "$HOST_DIR")" ]; then
         mkdir -p "$HOST_DIR"
-        mv -f "$MANIFEST_PATH" "$HOST_DIR/$HOST_NAME.json"
-        echo "Registered manifest at: $HOST_DIR/$HOST_NAME.json"
+        cp -f "$MANIFEST_PATH" "$HOST_DIR/$HOST_NAME.json"
+        echo "Installed manifest: $HOST_DIR/$HOST_NAME.json"
+        echo "Source manifest preserved at: $MANIFEST_PATH"
     else
         echo "Skipping non-existent browser config directory: $(dirname "$HOST_DIR")"
     fi
 done
 
-echo "Done."
+echo ""
+echo "Installation complete."
+echo "Native host:"
+echo "  $TARGET_HOST_PATH"
+
+if [ -f "$TARGET_HOST_PATH" ]; then
+echo "✓ Native host installed"
+else
+echo "✗ Native host missing"
+fi
+
+for HOST_DIR in "${DIRS[@]}"; do
+if [ -f "$HOST_DIR/$HOST_NAME.json" ]; then
+echo "✓ Manifest installed: $HOST_DIR/$HOST_NAME.json"
+fi
+done
