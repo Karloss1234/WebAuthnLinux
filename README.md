@@ -1,6 +1,152 @@
 # WebAuthnLinux (WebDevAuthn Derivative)
 
 > [!NOTE]
+> This fork extends WebDevAuthn into a Linux software Passkey authenticator with:
+>
+> - Linux fingerprint verification through Native Messaging
+> - WebAuthn credential management (view, rename, and delete stored credentials)
+> - Persistent credential storage
+> - Firefox and Chrome/Chromium support
+>
+> Current Version: **1.0.0-Alpha**
+
+---
+
+## Biometric Support
+
+WebAuthnLinux uses the Linux fingerprint stack through the native messaging host.
+
+Tested with:
+
+- `fprintd`
+- `open-fprintd`
+- `python-validity` fingerprint drivers
+
+The native messaging host communicates with the fingerprint service to provide biometric user verification during WebAuthn authentication.
+
+## Current Status
+
+WebAuthnLinux is an experimental Linux software authenticator based on WebDevAuthn that enables browser Passkey registration and authentication using local system biometric verification.
+
+Tested successfully with:
+
+- GitHub
+- Google
+- Microsoft
+- Government tax reporting websites
+- webauthn.io
+
+Test environments:
+
+- Fedora Linux
+- Kubuntu Linux
+
+Browsers tested:
+
+- Firefox
+- Chrome/Chromium
+
+## Installation
+
+Clone this repository:
+
+```bash
+git clone https://github.com/Karloss1234/WebAuthnLinux.git
+cd WebAuthnLinux
+```
+
+### 1. Load the extension
+
+WebAuthnLinux extension is currently installed as an unpacked extension at `WebAuthnLinux/extension/`.
+
+#### Firefox
+
+1. Open:
+```
+about:debugging#/runtime/this-firefox
+```
+2. Select **Load Temporary Add-on**.
+3. Browse to the `extension/` directory.
+4. Select: `manifest.json`
+5. In Extensions menu select `Pin to Toolbar` (Optional)
+
+#### Chrome / Chromium
+
+1. In `extension/` directory, rename `manifest.chrome.json` to `manifest.json`.
+2. Open:
+```
+chrome://extensions
+```
+3. Enable **Developer mode**.
+4. Select **Load unpacked**.
+5. Browse to and Select the `extension/` directory
+6. In Extensions menu select `Pin to Toolbar` (Optional)
+
+### 2. Install the native messaging host (Allows the browser extension to communicate with the Linux fingerprint reader, fprintd.):
+
+For firefox:
+```bash
+cd native
+./install.sh --firefox
+```
+For Chrome/Chromium:
+
+```bash
+cd native
+./install.sh --chrome <ID assigned to the unpacked extension by Chrome>
+```
+The installer will:
+
+- Install the native messaging host script.
+- Create the required native messaging manifest.
+- Configure communication between the browser extension and the Linux fingerprint service.
+- Manual creation of the native messaging host JSON file is not required.
+
+## Improvements in WebAuthnLinux 1.0.0-Alpha
+
+### Credential management
+
+- Added improved credential storage handling and persistence.
+- Improved loading and saving of `system_credentials` through browser storage.
+- Added reliable credential retrieval after extension restart.
+- Improved handling of stored credential metadata.
+- Added credential management operations including renaming and deleting credentials.
+
+### Authenticator reliability
+
+- Improved authenticator initialisation and state handling.
+- Improved asynchronous storage operations using modern Promise/async patterns.
+- Reduced the risk of credential storage inconsistencies.
+- Improved handling of authenticator state across browser sessions.
+
+### WebAuthn compatibility
+
+- Improved authenticator metadata handling, including AAGUID management.
+- Improved compatibility with browser WebAuthn flows.
+- Maintained compatibility with existing WebAuthn registration and authentication processes.
+
+### Native messaging installation improvements
+
+- Simplified native host installation.
+- Removed the need for users to manually create the native messaging manifest.
+- Added support for different Firefox configuration paths used by distributions such as Fedora.
+- Improved installer verification output.
+
+### Debugging and development
+
+- Added additional logging around credential operations and storage events.
+- Improved visibility of authenticator state transitions during testing.
+
+## Compatibility
+
+Existing registered credentials are expected to remain usable.
+
+
+# **PREVIOUS CONTENT**
+
+# WebAuthnLinux (WebDevAuthn Derivative)
+
+> [!NOTE]
 > This fork (**WebAuthnLinux**) extends the original tool with **Native Messaging support for Linux Fingerprint integration**.
 > Current Version: **1.0.0-Alpha**
 
