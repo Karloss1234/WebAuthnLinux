@@ -46,7 +46,7 @@ Browsers tested:
 
 - Firefox (APT and DNF)
 - Chrome/Chromium (APT and DNF)
-(Snap and Flatpack installations haven't been tested.  Please report any issues with these.)
+- (Snap and Flatpack installations haven't been tested.  Please report any issues with these.)
 
 ## Installation
 
