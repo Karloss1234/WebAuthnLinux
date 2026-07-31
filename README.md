@@ -35,6 +35,7 @@ Tested successfully with:
 - Microsoft
 - Government tax reporting websites
 - webauthn.io
+- Proton.me
 
 Test environments:
 
@@ -43,8 +44,9 @@ Test environments:
 
 Browsers tested:
 
-- Firefox
-- Chrome/Chromium
+- Firefox (APT and DNF)
+- Chrome/Chromium (APT and DNF)
+(Snap and Flatpack installations haven't been tested.  Please report any issues with these.)
 
 ## Installation
 
@@ -55,7 +57,7 @@ git clone https://github.com/Karloss1234/WebAuthnLinux.git
 cd WebAuthnLinux
 ```
 
-### 1. Load the extension
+### 1. Load the extension (Temporary load instructions)
 
 WebAuthnLinux extension is currently installed as an unpacked extension at `WebAuthnLinux/extension/`.
 
