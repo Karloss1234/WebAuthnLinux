@@ -41,23 +41,61 @@ Test environments:
 
 - Fedora Linux
 - Kubuntu Linux
+- Manjaro
 
 Browsers tested:
 
-- Firefox (APT and DNF)
-- Chrome/Chromium (APT and DNF)
-- (Snap and Flatpack installations haven't been tested.  Please report any issues with these.)
+- Firefox/Librefox (APT and DNF)
+- Chrome/Chromium/Brave (APT and DNF)
+- (Snap and Flatpak installations haven't been tested.  Please report any issues with these.)
 
 ## Installation
 
 Clone this repository:
 
 ```bash
-git clone https://github.com/Karloss1234/WebAuthnLinux.git
+cd 
+git clone -b webauthn-credential-manager https://github.com/Karloss1234/WebAuthnLinux.git
 cd WebAuthnLinux
 ```
 
+> [!IMPORTANT]
+> This fork currently requires the `webauthn-credential-manager` branch.
+>
+> The default `main` branch does not contain the required installer and extension manager.
+>
+> Verify your branch before continuing:
+>
+> ```bash
+> git branch
+> ```
+>
+> Expected output:
+>
+> ```
+> * webauthn-credential-manager
+> ```
+
+### 1. Quick Install Wizard
+
+```
+cd native
+./install.sh
+```
+
+The wizard will guide you through the installation.
+
+If the wizard cannot locate your browser's native messaging host directory, you will 
+need to find the directory and manually add it to install.sh.  
+(Please report the missing directory, browser and distro as an improvement request.)
+
+For more difficult installation failures, the detailed install instructions below may help.
+
+## Manual Installation of Native Messaging Host and Browser Extension
+
 ### 1. Load the extension (Temporary load instructions)
+
+After cloning the repository:
 
 WebAuthnLinux extension is currently installed as an unpacked extension at `WebAuthnLinux/extension/`.
 
