@@ -57,7 +57,7 @@ def verify_fingerprint():
         # we MUST capture or redirect subprocess IO to avoid corrupting the stream.
         
         # Small fix here since this only asked for one finger, the initially enrolled one instead on any since the user might have multiple enrolled ones
-        result = subprocess.run(['fprintd-verify', '-f', 'any'], capture_output=True, text=True)
+        result = subprocess.run(['/usr/bin/fprintd-verify', '-f', 'any'], capture_output=True, text=True)
         # Check for success string usually present in fprintd output
         if result.returncode == 0 and ("verify-match" in result.stdout or "verify-match" in result.stderr):
             return True, "Verified"
