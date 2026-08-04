@@ -89,7 +89,6 @@ echo ""
     echo "5. Select:"
     echo "     /WebAuthnLinux/webauthnlinux.xpi"
     echo ""
-
 }
 
 prepare_chrome_extension()
@@ -141,7 +140,7 @@ prepare_chrome_extension()
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --firefox) DO_FIREFOX=true ;;
-#        --chrome) CHROME_ID="$2"; DO_CHROME=true; shift ;;
+
         --chrome)
             DO_CHROME=true
 
@@ -160,7 +159,6 @@ done
 # ------------------------------------------------------------
 # Interactive installer wizard
 # ------------------------------------------------------------
-
 if [ "$DO_FIREFOX" = false ] && [ "$DO_CHROME" = false ]; then
 
     echo ""
@@ -237,7 +235,6 @@ echo ""
         echo "Installation cancelled."
         exit 0
     fi
-
 fi
 
 [[ "$DO_FIREFOX" == true ]] && [[ "$DO_CHROME" == true ]] && { echo "Only one browser install can be done at a time"; exit 2; }
@@ -329,7 +326,6 @@ if [ "$DO_FIREFOX" = true ]; then
         mkdir -p "$HOME/.config/mozilla/native-messaging-hosts"
         DIRS+=("$HOME/.config/mozilla/native-messaging-hosts")
     fi
-
 fi
 
 if [ "$DO_FIREFOX" = true ]; then
@@ -372,7 +368,6 @@ if [ "$DO_CHROME" = true ]; then
             echo "Found $BROWSER:"
             echo "  $(display_path "$DIR")"
             echo ""
-
             echo "Is the supplied WebAuthnLinux Extension ID for this browser?"
             echo "If not, skip to the next browser."
             echo ""
@@ -386,24 +381,17 @@ if [ "$DO_CHROME" = true ]; then
 
                 echo "Selected."
                 break
-
             else
-
                 echo "Skipped."
-
             fi
-
             echo ""
-
         fi
-
     done
 
     if [ "$FOUND_CHROMIUM" = false ]; then
 
         echo "No installed Chromium-family browsers detected."
         echo ""
-
         echo "Expected locations include:"
         echo "  ~/.config/google-chrome"
         echo "  ~/.config/chromium"
@@ -414,7 +402,6 @@ if [ "$DO_CHROME" = true ]; then
         echo ""
 
     fi
-
 fi
 
 if [ "$DO_CHROME" = true ]; then
@@ -473,7 +460,6 @@ if [ -f "$TARGET_HOST_PATH" ]; then
             echo "  Run the installer again and select the correct browser."
             echo ""
         fi
-
     fi
 else
     echo "✗ Native host missing"

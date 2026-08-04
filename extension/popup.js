@@ -1,7 +1,7 @@
 /*
  * WebAuthnLinux (WebDevAuthn Derivative)
  * Script: WebAuthn Settings
- * 
+ *
  * Original: GramThanos
  * Modifications by Samveen
  */
@@ -14,7 +14,6 @@ let options = [
 
 // Load items from addon storage
 chrome.storage.local.get(options, function (items) {
-
 	// For each option
 	options.forEach(option => {
 
@@ -25,8 +24,7 @@ chrome.storage.local.get(options, function (items) {
 			element.checked = items[option] ? true : false;
 
 			// Fix opacity
-			element.parentNode.parentNode.style.opacity =
-			items[option] ? 1 : 0.6;
+			element.parentNode.parentNode.style.opacity = items[option] ? 1 : 0.6;
 		}
 	});
 
@@ -41,34 +39,22 @@ chrome.storage.local.get(options, function (items) {
 	}
 });
 
-
 // For each option
 options.forEach(option => {
-
 	let element = document.getElementById(option);
-
 	if (element) {
-
 		// Add toggle listener
 		element.addEventListener('change', function () {
-
 			// Save option on/off
 			let obj = {};
 			obj[option] = this.checked;
-
-			chrome.storage.local.set(obj, () => {});
-
-
+			chrome.storage.local.set(obj, () => { });
 			// Fix opacity
-			this.parentNode.parentNode.style.opacity =
-			this.checked ? 1 : 0.6;
-
+			this.parentNode.parentNode.style.opacity = this.checked ? 1 : 0.6;
 			console.log(option, this.checked);
-
 		}, false);
 	}
 });
-
 document.getElementById('manageCredentials').addEventListener('click', () => {
 	chrome.tabs.create({
 		url: chrome.runtime.getURL('manager.html')

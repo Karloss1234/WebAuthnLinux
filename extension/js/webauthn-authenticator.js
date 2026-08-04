@@ -404,6 +404,7 @@ window.AuthnDevice = (function (localURL) {
 				// Search storage
 		//console.log('Storage', this.storage);
 		for (let i = this.storage.length - 1; i >= 0; i--) {
+			//console.log('Checking', this.storage[i].host, rp_id, this.storage[i].keyid, key_id);
 			console.log("Checking:", {
 				index: i,
 				host: this.storage[i].host,
@@ -413,10 +414,9 @@ window.AuthnDevice = (function (localURL) {
 			});
 			// If key found in storage
 			if (this.storage[i].host === rp_id && (key_id === null || this.storage[i].keyid === key_id)) {
-
 				console.log("RESIDENT KEY MATCH FOUND:", this.storage[i]);
-
 				let credentials = this.storage[i];
+				//console.log('Webpage match', credentials);
 
 				this.currentCredential = credentials;
 
@@ -434,15 +434,15 @@ window.AuthnDevice = (function (localURL) {
 				}
 
 				let wrappedKey = window.authnTools.base64urlToUint8Array(credentials.wrappedKey);
+				// Restore key salt
 				this.masterkeysalt = window.authnTools.base64urlToUint8Array(credentials.masterKeySalt);
-
-				let r = await this._cred_init(rp_id,user_handle,wrappedKey);
-
+				// Init credentials
+				let r = await this._cred_init(rp_id, user_handle, wrappedKey);
+				// Resident keys use a different credential id than the original credential id
 			if (r) {
 				if (key_id === null) {
-					key_id = new Uint8Array(
-						await window.crypto.subtle.digest('SHA-256', wrappedKey)
-					);
+					//key_id = window.authnTools.base64urlToUint8Array(credentials.keyid);
+					key_id = new Uint8Array(await window.crypto.subtle.digest('SHA-256', wrappedKey));
 				}
 				console.log("KEY ID BEFORE ASSIGN:", {
 					type: Object.prototype.toString.call(key_id),
@@ -450,8 +450,6 @@ window.AuthnDevice = (function (localURL) {
 							value: key_id
 				});
 
-
-				//this.credential_id = key_id;
 				if (typeof key_id === "string") {
 					this.credential_id = window.authnTools.base64urlToUint8Array(key_id);
 				} else {
@@ -487,9 +485,8 @@ window.AuthnDevice = (function (localURL) {
 	};
 
 	AuthnDevice.prototype._flags = function (flags) {
-		/*
+		/**
 		 * WebAuthn authenticator data flags:
-		 *
 		 * Bit 0: User Present (UP)
 		 * Bit 1: Reserved for future use (RFU1)
 		 * Bit 2: User Verified (UV)
@@ -546,22 +543,18 @@ window.AuthnDevice = (function (localURL) {
 			)
 		);
 
-		// Check if required/preferred Resident Key aka Discoverable credential
+		// Check if Resident Key (Discoverable Credential) is required or preferred.
+		// Newer WebAuthn uses residentKey while older implementations use requireResidentKey.
 		let requestResidentKey = false;
-
 		if (options.publicKey.authenticatorSelection) {
-
 			let selection = options.publicKey.authenticatorSelection;
-
 			requestResidentKey =
 			selection.requireResidentKey === true ||
 			selection.residentKey === "required" ||
 			selection.residentKey === "preferred";
 		}
 
-		if (this.testing.forceResidentKey) {
-			requestResidentKey = true;
-		}
+		if (this.testing.forceResidentKey) requestResidentKey = true;
 
 		// Calcualte RP ID and origin's effective domain
 		let origin = (() => {
@@ -655,6 +648,7 @@ window.AuthnDevice = (function (localURL) {
 			selection: options.publicKey.authenticatorSelection
 		});
 
+		// Save resident key
 		if (shouldSave) await this._saveResidentKey(rpid);
 
 		// Get credential id
@@ -687,7 +681,7 @@ window.AuthnDevice = (function (localURL) {
 
 		// hash the message
 		let rp_id_hash = new Uint8Array(await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(this.rp_id)));
-		let flags = new Uint8Array([this._flags({ up: true, uv: true, at: true })]);
+		let flags = new Uint8Array([this._flags({ uv: true, up: true, at: true })]);
 		let sign_count = window.authnTools.intToUint8Array(this._getSignCount(), 4, true);
 		let credential_id_length = window.authnTools.intToUint8Array(credential_id.length, 2, true);
 		let cose_key = new Uint8Array(window.CBOR.encode(this.cose_key));
@@ -770,11 +764,6 @@ window.AuthnDevice = (function (localURL) {
 
 		// Clear master key if not needed
 		if (this.askmasterkey) this.clearMasterKey();
-
-
-
-
-
 
 		// Return Credentials
 		return new (VirtualPublicKeyCredential())({
@@ -869,7 +858,6 @@ window.AuthnDevice = (function (localURL) {
 		let flags = new Uint8Array([this._flags({ uv: true, up: true })]);
 		let currentSignCount = this._getSignCount();
 		let sign_count = window.authnTools.intToUint8Array(currentSignCount,4,true);
-		//let sign_count = window.authnTools.intToUint8Array(this._getSignCount(), 4, true);
 		let authData = this._concatUint8Arrays(rp_id_hash, flags, sign_count);
 
 		console.log("AUTH DATA:", {
@@ -1434,14 +1422,7 @@ window.AuthnDevice = (function (localURL) {
 
 			if (type.name == 'ECDSA') {
 
-				let rawSignature = await crypto.subtle.sign(
-					{
-						name: 'ECDSA',
-						hash: 'SHA-256'
-					},
-					private_key,
-					data
-				);
+				let rawSignature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, private_key, data);
 
 				console.log("SIGNING CONTEXT:", {
 					algorithm: type.name,
@@ -1501,7 +1482,6 @@ window.AuthnDevice = (function (localURL) {
 
 				return derSignature;
 			}
-
 			else if (type.name == 'RSA-PSS') {
 				// ToDo Check
 				let signature = await crypto.subtle.sign({ name: 'RSA-PSS', saltLength: 128 }, private_key, data);

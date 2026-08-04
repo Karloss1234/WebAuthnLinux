@@ -1,7 +1,7 @@
 /*
  * WebAuthnLinux
  * Script: WebAuthn Linux Credential Provider
- * 
+ *
  * Original: Grammatopoulos Athanasios Vasileios (GramThanos)
  * Modifications by Samveen
  */
